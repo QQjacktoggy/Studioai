@@ -14,65 +14,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let gameActive = false;
 
-    const updateUI = (data) => {
+    const updateUI = (state) => {
         // Player Stats
-        if (data.player_stats) {
-            playerNameSpan.textContent = data.player_stats.name;
-            playerLevelSpan.textContent = data.player_stats.level;
-            playerXpSpan.textContent = data.player_stats.xp;
-            playerXpNextSpan.textContent = data.player_stats.xp_to_next_level;
+        if (state.player_stats) {
+            playerNameSpan.textContent = state.player_stats.name;
+            playerLevelSpan.textContent = state.player_stats.level;
+            playerXpSpan.textContent = state.player_stats.xp;
+            playerXpNextSpan.textContent = state.player_stats.xp_to_next_level;
         }
 
         // Monster Stats
-        if (data.monster_stats) {
-            monsterNameSpan.textContent = data.monster_stats.name;
-            monsterHpSpan.textContent = data.monster_stats.hp;
+        if (state.monster_stats) {
+            monsterNameSpan.textContent = state.monster_stats.name;
+            monsterHpSpan.textContent = state.monster_stats.hp;
         }
 
         // Question
-        if (data.new_question) {
-            questionP.textContent = data.new_question;
+        if (state.question_text) {
+            questionP.textContent = state.question_text;
         }
 
-        // Message
-        if (data.message) {
-            messageP.textContent = data.message;
-        }
+        // Message is handled separately in the event handlers
     };
 
-    const startGame = async () => {
+    const startGame = () => {
         const name = prompt("Enter your hero's name:", "Hero");
         if (!name) return;
 
-        const response = await fetch('/api/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: name })
-        });
-        const data = await response.json();
-        updateUI(data);
+        const initialState = Game.start_game(name);
+        updateUI(initialState);
+        messageP.textContent = `A wild ${initialState.monster_stats.name} appears!`;
         answerInput.focus();
         gameActive = true;
     };
 
-    const handleAnswerSubmit = async (e) => {
+    const handleAnswerSubmit = (e) => {
         e.preventDefault();
         if (!gameActive) return;
 
         const answer = answerInput.value;
         if (answer === '') return;
 
-        const response = await fetch('/api/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ answer: answer })
-        });
+        const result = Game.submit_answer(answer);
 
         answerInput.value = '';
-        const data = await response.json();
-        updateUI(data);
+        updateUI(result.game_state);
+        messageP.textContent = result.message;
 
-        if (data.monster_defeated) {
+        if (result.monster_defeated) {
             gameActive = false;
             questionP.textContent = "You won the battle!";
             // Create a "Next Battle" button
@@ -87,13 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const nextBattle = async (button) => {
-        const response = await fetch('/api/new_battle', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const data = await response.json();
-        updateUI(data);
+    const nextBattle = (button) => {
+        const newState = Game.new_battle();
+        updateUI(newState);
+        messageP.textContent = `A wild ${newState.monster_stats.name} appears!`;
 
         // Restore the form
         button.replaceWith(answerForm);
