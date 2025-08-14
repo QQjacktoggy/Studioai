@@ -5,6 +5,11 @@ const monster_types = [
     { name: "Dragon", hp: 200, image: "https://placehold.co/150x150/a9a9a9/ffffff?text=Dragon" }
 ];
 
+const SKILLS = {
+    "Fireball": { name: "Fireball", cost: 10, damage: 30, type: "damage" },
+    "Heal": { name: "Heal", cost: 15, heal: 50, type: "heal" }
+};
+
 const Game = {
     player: null,
     monster: null,
@@ -18,6 +23,7 @@ const Game = {
         this.game_over = false;
         this.player = new Player(player_name);
         this.player.image = "https://placehold.co/150x150/a9a9a9/ffffff?text=Player";
+        this.player.skills = [SKILLS.Fireball, SKILLS.Heal]; // Give player default skills
         this.new_battle();
         return this.get_state();
     },
@@ -98,6 +104,44 @@ const Game = {
             player_stats: { ...this.player },
             monster_stats: { ...this.monster },
             question_text: this.current_question.text
+        };
+    },
+
+    use_skill(skill_name) {
+        if (this.game_over) {
+            return { message: "The game is over." };
+        }
+
+        const skill = SKILLS[skill_name];
+        if (!skill) {
+            return { message: "Skill not found." };
+        }
+
+        if (!this.player.can_use_skill(skill.cost)) {
+            return { message: "Not enough MP!" };
+        }
+
+        this.player.use_mp(skill.cost);
+        let message = "";
+
+        if (skill.type === "damage") {
+            this.monster.take_damage(skill.damage);
+            message = `You used ${skill.name} and dealt ${skill.damage} damage!`;
+        } else if (skill.type === "heal") {
+            this.player.heal(skill.heal);
+            message = `You used ${skill.name} and healed for ${skill.heal} HP.`;
+        }
+
+        const monster_defeated = this.monster.is_defeated();
+        if (monster_defeated) {
+            this.player.gain_xp(50); // gain bonus xp
+            message += ` You defeated the ${this.monster.name}!`;
+        }
+
+        return {
+            message: message,
+            monster_defeated: monster_defeated,
+            game_state: this.get_state()
         };
     }
 };

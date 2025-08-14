@@ -44,4 +44,19 @@ class Player {
     is_defeated() {
         return this.hp === 0;
     }
+
+    can_use_skill(cost) {
+        return this.mp >= cost;
+    }
+
+    use_mp(cost) {
+        this.mp -= cost;
+    }
+
+    heal(amount) {
+        this.hp += amount;
+        if (this.hp > this.max_hp) {
+            this.hp = this.max_hp;
+        }
+    }
 }

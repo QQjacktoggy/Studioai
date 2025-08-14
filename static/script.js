@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const answerForm = document.getElementById('answer-form');
     const answerInput = document.getElementById('answer-input');
     const messageP = document.getElementById('message');
+    const skillsArea = document.getElementById('skills-area');
 
     let gameActive = false;
 
@@ -36,6 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
             playerMaxMpSpan.textContent = stats.max_mp;
             playerXpSpan.textContent = stats.xp;
             playerXpNextSpan.textContent = stats.xp_to_next_level;
+
+            // Update skill buttons based on MP
+            document.querySelectorAll('.skill-button').forEach(button => {
+                const skillName = button.id.replace('skill-', '');
+                const skill = SKILLS[skillName];
+                if (skill) {
+                    button.disabled = !Game.player.can_use_skill(skill.cost);
+                }
+            });
         }
 
         // Monster Stats
@@ -55,7 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = prompt("Enter your hero's name:", "Hero");
         if (!name) return;
 
-        // Restore the form if it was replaced by a button
         const gameContainer = document.getElementById('action-area');
         if (!gameContainer.contains(answerForm)) {
             const button = gameContainer.querySelector('button');
@@ -84,20 +93,42 @@ document.addEventListener('DOMContentLoaded', () => {
         updateUI(result.game_state);
         messageP.textContent = result.message;
 
+        handlePostActionState(result);
+    };
+
+    const handleSkillUse = (skillName) => {
+        if (!gameActive) return;
+
+        const result = Game.use_skill(skillName);
+        updateUI(result.game_state);
+        messageP.textContent = result.message;
+
+        handlePostActionState(result);
+    };
+
+    const handlePostActionState = (result) => {
         if (result.player_defeated) {
             gameActive = false;
             questionP.textContent = "GAME OVER";
+            skillsArea.style.display = 'none';
             const restartButton = document.createElement('button');
             restartButton.textContent = 'Restart Game';
             answerForm.replaceWith(restartButton);
-            restartButton.addEventListener('click', startGame);
+            restartButton.addEventListener('click', () => {
+                skillsArea.style.display = 'block';
+                startGame();
+            });
         } else if (result.monster_defeated) {
             gameActive = false;
             questionP.textContent = "You won the battle!";
+            skillsArea.style.display = 'none';
             const nextButton = document.createElement('button');
             nextButton.textContent = 'Next Battle';
             answerForm.replaceWith(nextButton);
-            nextButton.addEventListener('click', () => nextBattle(nextButton));
+            nextButton.addEventListener('click', () => {
+                skillsArea.style.display = 'block';
+                nextBattle(nextButton);
+            });
         } else {
              answerInput.focus();
         }
@@ -114,6 +145,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     answerForm.addEventListener('submit', handleAnswerSubmit);
+    document.getElementById('skill-Fireball').addEventListener('click', () => handleSkillUse('Fireball'));
+    document.getElementById('skill-Heal').addEventListener('click', () => handleSkillUse('Heal'));
 
     startGame();
 });
