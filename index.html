@@ -10,21 +10,27 @@
     <div id="game-container">
         <h1>Multiplication RPG</h1>
 
-        <div id="status-bars">
-            <div id="player-status">
-                <h2>Player: <span id="player-name"></span></h2>
-                <p>Level: <span id="player-level">1</span></p>
-                <p>HP: <span id="player-hp">100</span> / <span id="player-max-hp">100</span></p>
-                <p>MP: <span id="player-mp">50</span> / <span id="player-max-mp">50</span></p>
-                <p>XP: <span id="player-xp">0</span> / <span id="player-xp-next">100</span></p>
+        <div id="battle-screen">
+            <div class="character-area" id="player-area">
+                <img id="player-image" src="" alt="Player Sprite">
+                <div id="player-status">
+                    <h2>Player: <span id="player-name"></span></h2>
+                    <p>Level: <span id="player-level">1</span></p>
+                    <p>HP: <span id="player-hp">100</span> / <span id="player-max-hp">100</span></p>
+                    <p>MP: <span id="player-mp">50</span> / <span id="player-max-mp">50</span></p>
+                    <p>XP: <span id="player-xp">0</span> / <span id="player-xp-next">100</span></p>
+                </div>
             </div>
-            <div id="monster-status">
-                <h2>Monster: <span id="monster-name"></span></h2>
-                <p>HP: <span id="monster-hp">0</span></p>
+            <div class="character-area" id="monster-area">
+                <img id="monster-image" src="" alt="Monster Sprite">
+                <div id="monster-status">
+                    <h2>Monster: <span id="monster-name"></span></h2>
+                    <p>HP: <span id="monster-hp">0</span></p>
+                </div>
             </div>
         </div>
 
-        <div id="battle-area">
+        <div id="action-area">
             <div id="question-area">
                 <p id="question">What is ... ?</p>
             </div>

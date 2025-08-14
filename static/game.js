@@ -1,8 +1,8 @@
 const monster_types = [
-    { name: "Slime", hp: 50 },
-    { name: "Goblin", hp: 75 },
-    { name: "Orc", hp: 100 },
-    { name: "Dragon", hp: 200 }
+    { name: "Slime", hp: 50, image: "https://placehold.co/150x150/a9a9a9/ffffff?text=Slime" },
+    { name: "Goblin", hp: 75, image: "https://placehold.co/150x150/a9a9a9/ffffff?text=Goblin" },
+    { name: "Orc", hp: 100, image: "https://placehold.co/150x150/a9a9a9/ffffff?text=Orc" },
+    { name: "Dragon", hp: 200, image: "https://placehold.co/150x150/a9a9a9/ffffff?text=Dragon" }
 ];
 
 const Game = {
@@ -17,6 +17,7 @@ const Game = {
     start_game(player_name) {
         this.game_over = false;
         this.player = new Player(player_name);
+        this.player.image = "https://placehold.co/150x150/a9a9a9/ffffff?text=Player";
         this.new_battle();
         return this.get_state();
     },
@@ -24,6 +25,7 @@ const Game = {
     new_battle() {
         const monster_data = monster_types[Math.floor(Math.random() * monster_types.length)];
         this.monster = new Monster(monster_data.name, monster_data.hp);
+        this.monster.image = monster_data.image; // Assign image to monster instance
         this.generate_new_question();
         return this.get_state();
     },

@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Player UI Elements
+    const playerImage = document.getElementById('player-image');
     const playerNameSpan = document.getElementById('player-name');
     const playerLevelSpan = document.getElementById('player-level');
     const playerHpSpan = document.getElementById('player-hp');
@@ -10,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const playerXpNextSpan = document.getElementById('player-xp-next');
 
     // Monster UI Elements
+    const monsterImage = document.getElementById('monster-image');
     const monsterNameSpan = document.getElementById('monster-name');
     const monsterHpSpan = document.getElementById('monster-hp');
 
@@ -25,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Player Stats
         if (state.player_stats) {
             const stats = state.player_stats;
+            playerImage.src = stats.image;
             playerNameSpan.textContent = stats.name;
             playerLevelSpan.textContent = stats.level;
             playerHpSpan.textContent = stats.hp;
@@ -37,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Monster Stats
         if (state.monster_stats) {
+            monsterImage.src = state.monster_stats.image;
             monsterNameSpan.textContent = state.monster_stats.name;
             monsterHpSpan.textContent = state.monster_stats.hp;
         }
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!name) return;
 
         // Restore the form if it was replaced by a button
-        const gameContainer = document.getElementById('battle-area');
+        const gameContainer = document.getElementById('action-area');
         if (!gameContainer.contains(answerForm)) {
             const button = gameContainer.querySelector('button');
             if (button) {
