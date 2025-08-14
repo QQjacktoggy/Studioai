@@ -8,12 +8,14 @@ const monster_types = [
 const Game = {
     player: null,
     monster: null,
+    game_over: false,
     current_question: {
         text: "",
         answer: null
     },
 
     start_game(player_name) {
+        this.game_over = false;
         this.player = new Player(player_name);
         this.new_battle();
         return this.get_state();
@@ -34,6 +36,14 @@ const Game = {
     },
 
     submit_answer(player_answer) {
+        if (this.game_over) {
+            return {
+                game_over: true,
+                message: "The game is over. Please start a new game.",
+                game_state: this.get_state()
+            };
+        }
+
         const correct = parseInt(player_answer, 10) === this.current_question.answer;
         let message = "";
         let leveled_up = false;
@@ -47,8 +57,18 @@ const Game = {
                 message += " You leveled up!";
             }
         } else {
-            message = `Wrong! The correct answer was ${this.current_question.answer}.`;
-            // Could add player damage here in the future
+            const damage_taken = 10;
+            this.player.take_damage(damage_taken);
+            message = `Wrong! The correct answer was ${this.current_question.answer}. You take ${damage_taken} damage.`;
+
+            if (this.player.is_defeated()) {
+                this.game_over = true;
+                return {
+                    player_defeated: true,
+                    message: "You have been defeated... Game Over.",
+                    game_state: this.get_state()
+                };
+            }
         }
 
         let monster_defeated = this.monster.is_defeated();
@@ -66,6 +86,7 @@ const Game = {
             correct: correct,
             message: message,
             monster_defeated: monster_defeated,
+            player_defeated: false,
             game_state: this.get_state()
         };
     },
