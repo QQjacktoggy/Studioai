@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication RPG</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Multiplication RPG</h1>
+
+        <div id="status-bars">
+            <div id="player-status">
+                <h2>Player: <span id="player-name"></span></h2>
+                <p>Level: <span id="player-level">1</span></p>
+                <p>XP: <span id="player-xp">0</span> / <span id="player-xp-next">100</span></p>
+            </div>
+            <div id="monster-status">
+                <h2>Monster: <span id="monster-name"></span></h2>
+                <p>HP: <span id="monster-hp">0</span></p>
+            </div>
+        </div>
+
+        <div id="battle-area">
+            <div id="question-area">
+                <p id="question">What is ... ?</p>
+            </div>
+            <form id="answer-form">
+                <input type="text" id="answer-input" autocomplete="off" required>
+                <button type="submit">Attack!</button>
+            </form>
+        </div>
+
+        <div id="message-area">
+            <p id="message">Welcome! A new battle begins!</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
